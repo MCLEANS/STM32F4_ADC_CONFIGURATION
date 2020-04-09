@@ -18,6 +18,10 @@ enum sampling_rate{
 	HIGH
 };
 
+enum adc_channel{
+	ch0,ch1,ch2,ch3,ch4,ch5,ch6,ch7,ch8,ch9,ch10,ch11,ch12,ch13,ch14,ch15
+};
+
 class ADC {
 public:
 	ADC();

@@ -15,9 +15,9 @@
 namespace custom_libraries {
 
 enum Sampling_rate{
-	LOW,
+	SLOW,
 	MEDIUM,
-	HIGH
+	FAST
 };
 
 enum ADC_channel{

@@ -39,6 +39,53 @@ _ADC::_ADC(ADC_TypeDef *ADC_,GPIO_TypeDef *GPIO,uint8_t PIN,ADC_channel channel,
 	//This is done in the ADC common control register
 	ADC->CCR |= ADC_CCR_ADCPRE_0; //prescaler of 4 to set clock to 21MHz (must be < 30MHz)
 
+	//enable ADC end of conversion
+	ADC_->CR1 |= ADC_CR1_EOCIE;
+
+	//Set the sampling rate
+	switch(sample_rate){
+		case SLOW:
+			if(channel < 10){
+				ADC_->SMPR2 |= (1 <<((channel*3)));
+				ADC_->SMPR2 |= (1 <<((channel*3)+1));
+				ADC_->SMPR2 |= (1 <<((channel*3)+2));
+			}
+			else{
+				ADC_->SMPR1 |= (1 <<(((channel-10)*3)));
+				ADC_->SMPR1 |= (1 <<(((channel-10)*3)+1));
+				ADC_->SMPR1 |= (1 <<(((channel-10)*3)+2));
+			}
+			break;
+		case MEDIUM:
+			if(channel < 10){
+				ADC_->SMPR2 &= ~(1 <<((channel*3)));
+				ADC_->SMPR2 &= ~(1 <<((channel*3)+1));
+				ADC_->SMPR2 |= (1 <<((channel*3)+2));
+			}
+			else{
+				ADC_->SMPR1 &= ~(1 <<(((channel-10)*3)));
+				ADC_->SMPR1 &= ~(1 <<(((channel-10)*3)+1));
+				ADC_->SMPR1 |= (1 <<(((channel-10)*3)+2));
+			}
+			break;
+		case FAST:
+			if(channel < 10){
+				ADC_->SMPR2 &= ~(1 <<((channel*3)));
+				ADC_->SMPR2 &= ~(1 <<((channel*3)+1));
+				ADC_->SMPR2 &= ~(1 <<((channel*3)+2));
+			}
+			else{
+				ADC_->SMPR1 &= ~(1 <<(((channel-10)*3)));
+				ADC_->SMPR1 &= ~(1 <<(((channel-10)*3)+1));
+				ADC_->SMPR1 &= ~(1 <<(((channel-10)*3)+2));
+			}
+			break;
+		default:
+			break;
+
+	}
+
+
 	//Set number of channels
 	//Set all its registers to zero signaling one conversion
 	ADC_->SQR1 &= ~ADC_SQR1_L;
@@ -157,24 +204,15 @@ _ADC::_ADC(ADC_TypeDef *ADC_,GPIO_TypeDef *GPIO,uint8_t PIN,ADC_channel channel,
 			ADC_->SQR3 |= ADC_SQR3_SQ1_3;
 			ADC_->SQR3 &= ~ADC_SQR3_SQ1_4;
 			break;
-		default: //default value is set set to ADC_CH0
-			ADC_->SQR3 &= ~ADC_SQR3_SQ1_0;
-			ADC_->SQR3 &= ~ADC_SQR3_SQ1_1;
-			ADC_->SQR3 &= ~ADC_SQR3_SQ1_2;
-			ADC_->SQR3 &= ~ADC_SQR3_SQ1_3;
-			ADC_->SQR3 &= ~ADC_SQR3_SQ1_4;
+		default:
 			break;
-
 	}
-
-
-
-
 }
 
 void _ADC::initialize(){
 	//Enable ADC and set to continuous mode
 	//This first enabling wakes it up from sleep
+
 	//delay time Tstab as stated in reference manual
 	//Enable ADC again to start
 	//The second enable actually enables the ADC

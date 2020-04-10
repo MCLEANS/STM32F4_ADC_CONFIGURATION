@@ -23,6 +23,12 @@ enum adc_channel{
 };
 
 class ADC {
+private:
+
+private:
+
+public:
+
 public:
 	ADC();
 	~ADC();

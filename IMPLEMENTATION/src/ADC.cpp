@@ -209,6 +209,11 @@ _ADC::_ADC(ADC_TypeDef *ADC_,GPIO_TypeDef *GPIO,uint8_t PIN,ADC_channel channel,
 	}
 }
 
+void _ADC::delay(uint32_t duration){
+	this->count = 0;
+	while(this->count < duration){}
+}
+
 void _ADC::initialize(){
 	//Enable ADC and set to continuous mode
 	//This first enabling wakes it up from sleep

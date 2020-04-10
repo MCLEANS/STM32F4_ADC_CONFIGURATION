@@ -217,12 +217,14 @@ void _ADC::delay_ms(uint32_t duration){
 void _ADC::initialize(){
 	//Enable ADC and set to continuous mode
 	//This first enabling wakes it up from sleep
-	_ADC->CR2 |= ADC_CR2_ADON | ADC_CR2_CONT;
+	ADC_->CR2 |= ADC_CR2_ADON | ADC_CR2_CONT;
 
 	//delay time Tstab as stated in reference manual
-	delay()
+	delay_ms(2);
+
 	//Enable ADC again to start
 	//The second enable actually enables the ADC
+	ADC_->CR2 |= ADC_CR2_ADON;
 }
 
 _ADC::~_ADC() {

@@ -32,8 +32,8 @@ _ADC::_ADC(ADC_TypeDef *ADC_,GPIO_TypeDef *GPIO,uint8_t PIN,ADC_channel channel,
 	if(ADC_ == ADC3) RCC->APB2ENR |= RCC_APB2ENR_ADC3EN;
 
 	//Set GPIO to analog mode
-	GPIO->MODER |= (1<<((this->PIN * 2)));
-	GPIO->MODER |= (1<<((this->PIN * 2)+1));
+	GPIO->MODER |= (1<<((PIN * 2)));
+	GPIO->MODER |= (1<<((PIN * 2)+1));
 
 	//Set ADC prescaler
 	//This is done in the ADC common control register
@@ -225,6 +225,10 @@ void _ADC::initialize(){
 	//Enable ADC again to start
 	//The second enable actually enables the ADC
 	ADC_->CR2 |= ADC_CR2_ADON;
+
+	delay_ms(2);
+	//start first ADC conversion
+	ADC_->CR2 |= ADC_CR2_SWSTART;
 }
 
 _ADC::~_ADC() {

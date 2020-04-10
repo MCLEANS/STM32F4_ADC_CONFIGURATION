@@ -38,7 +38,7 @@ public:
 
 public:
 	_ADC(GPIO_TypeDef *GPIO,uint8_t PIN,ADC_channel channel,Sampling_rate sample_rate);
-	void Initialize();
+	void initialize();
 	~_ADC();
 
 };

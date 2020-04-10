@@ -10,28 +10,36 @@
 #ifndef ADC_H_
 #define ADC_H_
 
+#include "stm32f4xx.h"
+
 namespace custom_libraries {
 
-enum sampling_rate{
+enum Sampling_rate{
 	LOW,
 	MEDIUM,
 	HIGH
 };
 
-enum adc_channel{
+enum ADC_channel{
 	ch0,ch1,ch2,ch3,ch4,ch5,ch6,ch7,ch8,ch9,ch10,ch11,ch12,ch13,ch14,ch15
 };
 
-class ADC {
+class _ADC{
 private:
+	GPIO_TypeDef *GPIO;
+	uint8_t PIN;
+	Sampling_rate sample_rate;
+	ADC_channel channel;
 
 private:
 
 public:
 
 public:
-	ADC();
-	~ADC();
+	_ADC();
+	void Initialize();
+	~_ADC();
+
 };
 
 } /* namespace custom_libraries */

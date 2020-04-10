@@ -26,6 +26,7 @@ enum ADC_channel{
 
 class _ADC{
 private:
+	ADC_TypeDef *ADC_;
 	GPIO_TypeDef *GPIO;
 	uint8_t PIN;
 	ADC_channel channel;
@@ -37,7 +38,7 @@ private:
 public:
 
 public:
-	_ADC(GPIO_TypeDef *GPIO,uint8_t PIN,ADC_channel channel,Sampling_rate sample_rate);
+	_ADC(ADC_TypeDef *ADC_,GPIO_TypeDef *GPIO,uint8_t PIN,ADC_channel channel,Sampling_rate sample_rate);
 	void initialize();
 	~_ADC();
 

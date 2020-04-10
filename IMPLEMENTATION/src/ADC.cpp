@@ -9,17 +9,165 @@
 
 namespace custom_libraries {
 
-_ADC::_ADC(GPIO_TypeDef *GPIO,uint8_t PIN,ADC_channel channel,Sampling_rate sample_rate): GPIO(GPIO),
-																							PIN(PIN),
-																							channel(channel),
-																							sample_rate(sample_rate){
+_ADC::_ADC(ADC_TypeDef *ADC_,GPIO_TypeDef *GPIO,uint8_t PIN,ADC_channel channel,Sampling_rate sample_rate):ADC_(ADC_),
+																										GPIO(GPIO),
+																										PIN(PIN),
+																										channel(channel),
+																										sample_rate(sample_rate){
 
 	//Enable GPIO_RCC
+	if(GPIO == GPIOA) RCC->AHB1ENR |= RCC_AHB1ENR_GPIOAEN;
+	if(GPIO == GPIOB) RCC->AHB1ENR |= RCC_AHB1ENR_GPIOBEN;
+	if(GPIO == GPIOC) RCC->AHB1ENR |= RCC_AHB1ENR_GPIOCEN;
+	if(GPIO == GPIOD) RCC->AHB1ENR |= RCC_AHB1ENR_GPIODEN;
+	if(GPIO == GPIOE) RCC->AHB1ENR |= RCC_AHB1ENR_GPIOEEN;
+	if(GPIO == GPIOF) RCC->AHB1ENR |= RCC_AHB1ENR_GPIOFEN;
+	if(GPIO == GPIOG) RCC->AHB1ENR |= RCC_AHB1ENR_GPIOGEN;
+	if(GPIO == GPIOH) RCC->AHB1ENR |= RCC_AHB1ENR_GPIOHEN;
+	if(GPIO == GPIOI) RCC->AHB1ENR |= RCC_AHB1ENR_GPIOIEN;
+
 	//Enable ADC_RCC
-	//Set GPIO to analog modes
+	if(ADC_ == ADC1) RCC->APB2ENR |= RCC_APB2ENR_ADC1EN;
+	if(ADC_ == ADC2) RCC->APB2ENR |= RCC_APB2ENR_ADC2EN;
+	if(ADC_ == ADC3) RCC->APB2ENR |= RCC_APB2ENR_ADC3EN;
+
+	//Set GPIO to analog mode
+	GPIO->MODER |= (1<<((this->PIN * 2)));
+	GPIO->MODER |= (1<<((this->PIN * 2)+1));
+
 	//Set ADC prescaler
+	//This is done in the ADC common control register
+	ADC->CCR |= ADC_CCR_ADCPRE_0; //prescaler of 4 to set clock to 21MHz (must be < 30MHz)
+
 	//Set number of channels
+	//Set all its registers to zero signaling one conversion
+	ADC_->SQR1 &= ~ADC_SQR1_L;
+
 	//Set channel sequence
+	switch(channel){
+		case ch0:
+			ADC_->SQR3 &= ~ADC_SQR3_SQ1_0;
+			ADC_->SQR3 &= ~ADC_SQR3_SQ1_1;
+			ADC_->SQR3 &= ~ADC_SQR3_SQ1_2;
+			ADC_->SQR3 &= ~ADC_SQR3_SQ1_3;
+			ADC_->SQR3 &= ~ADC_SQR3_SQ1_4;
+			break;
+		case ch1:
+			ADC_->SQR3 |= ADC_SQR3_SQ1_0;
+			ADC_->SQR3 &= ~ADC_SQR3_SQ1_1;
+			ADC_->SQR3 &= ~ADC_SQR3_SQ1_2;
+			ADC_->SQR3 &= ~ADC_SQR3_SQ1_3;
+			ADC_->SQR3 &= ~ADC_SQR3_SQ1_4;
+			break;
+		case ch2:
+			ADC_->SQR3 &= ~ADC_SQR3_SQ1_0;
+			ADC_->SQR3 |= ADC_SQR3_SQ1_1;
+			ADC_->SQR3 &= ~ADC_SQR3_SQ1_2;
+			ADC_->SQR3 &= ~ADC_SQR3_SQ1_3;
+			ADC_->SQR3 &= ~ADC_SQR3_SQ1_4;
+			break;
+		case ch3:
+			ADC_->SQR3 |= ADC_SQR3_SQ1_0;
+			ADC_->SQR3 |= ADC_SQR3_SQ1_1;
+			ADC_->SQR3 &= ~ADC_SQR3_SQ1_2;
+			ADC_->SQR3 &= ~ADC_SQR3_SQ1_3;
+			ADC_->SQR3 &= ~ADC_SQR3_SQ1_4;
+			break;
+		case ch4:
+			ADC_->SQR3 &= ~ADC_SQR3_SQ1_0;
+			ADC_->SQR3 &= ~ADC_SQR3_SQ1_1;
+			ADC_->SQR3 |= ADC_SQR3_SQ1_2;
+			ADC_->SQR3 &= ~ADC_SQR3_SQ1_3;
+			ADC_->SQR3 &= ~ADC_SQR3_SQ1_4;
+			break;
+		case ch5:
+			ADC_->SQR3 |= ADC_SQR3_SQ1_0;
+			ADC_->SQR3 &= ~ADC_SQR3_SQ1_1;
+			ADC_->SQR3 |= ADC_SQR3_SQ1_2;
+			ADC_->SQR3 &= ~ADC_SQR3_SQ1_3;
+			ADC_->SQR3 &= ~ADC_SQR3_SQ1_4;
+			break;
+		case ch6:
+			ADC_->SQR3 &= ~ADC_SQR3_SQ1_0;
+			ADC_->SQR3 |= ADC_SQR3_SQ1_1;
+			ADC_->SQR3 |= ADC_SQR3_SQ1_2;
+			ADC_->SQR3 &= ~ADC_SQR3_SQ1_3;
+			ADC_->SQR3 &= ~ADC_SQR3_SQ1_4;
+			break;
+		case ch7:
+			ADC_->SQR3 |= ADC_SQR3_SQ1_0;
+			ADC_->SQR3 |= ADC_SQR3_SQ1_1;
+			ADC_->SQR3 |= ADC_SQR3_SQ1_2;
+			ADC_->SQR3 &= ~ADC_SQR3_SQ1_3;
+			ADC_->SQR3 &= ~ADC_SQR3_SQ1_4;
+			break;
+		case ch8:
+			ADC_->SQR3 &= ~ADC_SQR3_SQ1_0;
+			ADC_->SQR3 &= ~ADC_SQR3_SQ1_1;
+			ADC_->SQR3 &= ~ADC_SQR3_SQ1_2;
+			ADC_->SQR3 |= ADC_SQR3_SQ1_3;
+			ADC_->SQR3 &= ~ADC_SQR3_SQ1_4;
+			break;
+		case ch9:
+			ADC_->SQR3 |= ADC_SQR3_SQ1_0;
+			ADC_->SQR3 &= ~ADC_SQR3_SQ1_1;
+			ADC_->SQR3 &= ~ADC_SQR3_SQ1_2;
+			ADC_->SQR3 |= ADC_SQR3_SQ1_3;
+			ADC_->SQR3 &= ~ADC_SQR3_SQ1_4;
+			break;
+		case ch10:
+			ADC_->SQR3 &= ~ADC_SQR3_SQ1_0;
+			ADC_->SQR3 |= ADC_SQR3_SQ1_1;
+			ADC_->SQR3 &= ~ADC_SQR3_SQ1_2;
+			ADC_->SQR3 |= ADC_SQR3_SQ1_3;
+			ADC_->SQR3 &= ~ADC_SQR3_SQ1_4;
+			break;
+		case ch11:
+			ADC_->SQR3 |= ADC_SQR3_SQ1_0;
+			ADC_->SQR3 |= ADC_SQR3_SQ1_1;
+			ADC_->SQR3 &= ~ADC_SQR3_SQ1_2;
+			ADC_->SQR3 |= ADC_SQR3_SQ1_3;
+			ADC_->SQR3 &= ~ADC_SQR3_SQ1_4;
+			break;
+		case ch12:
+			ADC_->SQR3 &= ~ADC_SQR3_SQ1_0;
+			ADC_->SQR3 &= ~ADC_SQR3_SQ1_1;
+			ADC_->SQR3 |= ADC_SQR3_SQ1_2;
+			ADC_->SQR3 |= ADC_SQR3_SQ1_3;
+			ADC_->SQR3 &= ~ADC_SQR3_SQ1_4;
+			break;
+		case ch13:
+			ADC_->SQR3 |= ADC_SQR3_SQ1_0;
+			ADC_->SQR3 &= ~ADC_SQR3_SQ1_1;
+			ADC_->SQR3 |= ADC_SQR3_SQ1_2;
+			ADC_->SQR3 |= ADC_SQR3_SQ1_3;
+			ADC_->SQR3 &= ~ADC_SQR3_SQ1_4;
+			break;
+		case ch14:
+			ADC_->SQR3 &= ~ADC_SQR3_SQ1_0;
+			ADC_->SQR3 |= ADC_SQR3_SQ1_1;
+			ADC_->SQR3 |= ADC_SQR3_SQ1_2;
+			ADC_->SQR3 |= ADC_SQR3_SQ1_3;
+			ADC_->SQR3 &= ~ADC_SQR3_SQ1_4;
+			break;
+		case ch15:
+			ADC_->SQR3 |= ADC_SQR3_SQ1_0;
+			ADC_->SQR3 |= ADC_SQR3_SQ1_1;
+			ADC_->SQR3 |= ADC_SQR3_SQ1_2;
+			ADC_->SQR3 |= ADC_SQR3_SQ1_3;
+			ADC_->SQR3 &= ~ADC_SQR3_SQ1_4;
+			break;
+		default: //default value is set set to ADC_CH0
+			ADC_->SQR3 &= ~ADC_SQR3_SQ1_0;
+			ADC_->SQR3 &= ~ADC_SQR3_SQ1_1;
+			ADC_->SQR3 &= ~ADC_SQR3_SQ1_2;
+			ADC_->SQR3 &= ~ADC_SQR3_SQ1_3;
+			ADC_->SQR3 &= ~ADC_SQR3_SQ1_4;
+			break;
+
+	}
+
+
 
 
 }

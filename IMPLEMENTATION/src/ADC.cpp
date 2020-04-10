@@ -209,7 +209,7 @@ _ADC::_ADC(ADC_TypeDef *ADC_,GPIO_TypeDef *GPIO,uint8_t PIN,ADC_channel channel,
 	}
 }
 
-void _ADC::delay(uint32_t duration){
+void _ADC::delay_ms(uint32_t duration){
 	this->count = 0;
 	while(this->count < duration){}
 }
@@ -217,8 +217,10 @@ void _ADC::delay(uint32_t duration){
 void _ADC::initialize(){
 	//Enable ADC and set to continuous mode
 	//This first enabling wakes it up from sleep
+	_ADC->CR2 |= ADC_CR2_ADON | ADC_CR2_CONT;
 
 	//delay time Tstab as stated in reference manual
+	delay()
 	//Enable ADC again to start
 	//The second enable actually enables the ADC
 }

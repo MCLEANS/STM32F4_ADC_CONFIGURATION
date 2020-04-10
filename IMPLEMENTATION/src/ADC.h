@@ -28,15 +28,16 @@ class _ADC{
 private:
 	GPIO_TypeDef *GPIO;
 	uint8_t PIN;
-	Sampling_rate sample_rate;
 	ADC_channel channel;
+	Sampling_rate sample_rate;
+
 
 private:
 
 public:
 
 public:
-	_ADC();
+	_ADC(GPIO_TypeDef *GPIO,uint8_t PIN,ADC_channel channel,Sampling_rate sample_rate);
 	void Initialize();
 	~_ADC();
 

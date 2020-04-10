@@ -9,12 +9,12 @@
 
 namespace custom_libraries {
 
-ADC::ADC() {
+_ADC::_ADC() {
 	// TODO Auto-generated constructor stub
 
 }
 
-ADC::~ADC() {
+_ADC::~_ADC() {
 	// TODO Auto-generated destructor stub
 }
 
